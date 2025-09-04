@@ -5,9 +5,9 @@ baseurl: "/particle" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site e.g. http://willianjusten.com.br
 
 # User settings
-username: asgfhariali
+username: asghariali
 user_description: An economics student
-user_title: Student
+user_title: An economics student
 email: asghari@ifo.de
 twitter_username: asgharialiali
 github_username:  asghariali1
