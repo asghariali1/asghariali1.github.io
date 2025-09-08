@@ -459,29 +459,273 @@ body {
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            /* Mobile First - Base styles for mobile */
+            body {
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 20px 10px;
+            }
+            
             .site-title {
                 font-size: 2rem;
+                margin-bottom: 0.5rem;
             }
-
+            
             .site-description {
                 font-size: 1rem;
+                margin-bottom: 1rem;
             }
-
+            
+            /* Social buttons mobile layout */
+            .social-buttons {
+                flex-direction: row;
+                gap: 15px;
+                margin-top: 15px;
+            }
+            
+            .social-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .social-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            /* Canvas adjustments for mobile */
+            #canvas {
+                left: 50%;
+                transform: translate(-50%, -50%);
+                opacity: 0.5;
+            }
+            
+            /* Controls for mobile */
+            .controls {
+                top: 10px;
+                right: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .control-btn {
+                padding: 6px 10px;
+                font-size: 10px;
+                margin: 2px 0;
+            }
+            
+            /* Info panel mobile */
+            .info {
+                bottom: 10px;
+                left: 10px;
+                font-size: 12px;
+                max-width: 250px;
+                background: rgba(0, 0, 0, 0.7);
+                padding: 10px;
+                border-radius: 8px;
+            }
+            
+            /* Scroll indicator mobile */
+            .scroll-indicator {
+                bottom: 20px;
+            }
+            
+            .scroll-text {
+                font-size: 12px;
+            }
+            
+            /* Projects section mobile */
+            .projects-section {
+                padding: 40px 0;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+                padding: 0 20px;
+            }
+            
             .projects-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
+                padding: 0 15px;
             }
-
-            .section-title {
-                font-size: 2rem;
+            
+            .project-card {
+                padding: 20px;
             }
-
+            
+            .project-title {
+                font-size: 1.3rem;
+            }
+            
+            .project-description {
+                font-size: 14px;
+            }
+            
+            .project-tech {
+                gap: 6px;
+                margin-bottom: 15px;
+            }
+            
+            .tech-tag {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+            
+            .project-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .project-link {
+                font-size: 13px;
+            }
+        }
+        
+        /* Tablet styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .site-title {
+                font-size: 2.5rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+            
+            .controls {
+                top: 15px;
+                right: 15px;
+            }
+            
+            .control-btn {
+                padding: 7px 11px;
+                font-size: 11px;
+            }
+        }
+        
+        /* Desktop styles */
+        @media (min-width: 1025px) {
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 1000px;
+            }
+        }
+        
+        /* Large desktop styles */
+        @media (min-width: 1400px) {
+            .projects-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 1200px;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .social-btn:hover,
+            .project-card:hover,
+            .control-btn:hover {
+                transform: none;
+            }
+            
+            .social-btn:active {
+                transform: scale(0.95);
+            }
+            
+            .control-btn:active {
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            .project-card:active {
+                transform: scale(0.98);
+            }
+        }
+        
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .header {
+                top: 10%;
+            }
+            
+            .site-title {
+                font-size: 1.8rem;
+            }
+            
+            .site-description {
+                font-size: 0.9rem;
+            }
+            
+            .scroll-indicator {
+                bottom: 15px;
+            }
+            
+            .info {
+                bottom: 5px;
+                left: 5px;
+                font-size: 11px;
+                max-width: 200px;
+                padding: 8px;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .site-title {
+                font-size: 1.8rem;
+            }
+            
+            .site-description {
+                font-size: 0.9rem;
+            }
+            
             .social-buttons {
-                gap: 15px;
+                gap: 12px;
             }
-
+            
             .social-btn {
-                width: 45px;
-                height: 45px;
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            
+            .social-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .projects-grid {
+                padding: 0 10px;
+            }
+            
+            .project-card {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+                padding: 0 10px;
+            }
+            
+            .section-subtitle {
+                font-size: 0.9rem;
+                padding: 0 10px;
+            }
+        }
+        
+        /* Fix viewport issues on mobile */
+        @media screen and (max-width: 768px) {
+            .container {
+                min-height: 100vh;
+                min-height: 100dvh; /* Dynamic viewport height */
             }
         }
