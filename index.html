@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central Limit Theorem Animation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Ali Asghari - Personal page with projects and Central Limit Theorem visualization">
+    <meta name="keywords" content="Ali Asghari, Statistics, Data Visualization, Machine Learning, JavaScript">
+    <title>Ali Asghari - Projects & Experiments</title>
     <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
@@ -36,12 +38,18 @@
 
         <canvas id="canvas"></canvas>
         
+        <div class="controls">
+            <button class="control-btn" onclick="toggleAnimation()">⏯️</button>
+            <button class="control-btn" onclick="resetAnimation()">🔄</button>
+            <button class="control-btn" onclick="changeSampleSize()">📊</button>
+            <button class="control-btn" onclick="changeDistribution()">📈</button>
+        </div>
 
         <div class="info">
-            <strong>Central Limit Theorem in Action</strong><br>
-            Sample Size: <span id="sampleSize">30</span><br>
-            Distribution: <span id="distType">Uniform</span><br>
-            Samples Collected: <span id="sampleCount">0</span>
+            <strong>Central Limit Theorem</strong><br>
+            Size: <span id="sampleSize">30</span><br>
+            Type: <span id="distType">Uniform</span><br>
+            Count: <span id="sampleCount">0</span>
         </div>
         
         <div class="scroll-indicator" onclick="scrollToProjects()">
