@@ -1,9 +1,24 @@
- const canvas = document.getElementById('canvas');
+ // Get the appropriate canvas based on screen size
+        const canvas = window.innerWidth <= 900 ? 
+            document.getElementById('mobile-canvas') : 
+            document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
         // Set canvas size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        function resizeCanvas() {
+            if (window.innerWidth <= 900) {
+                // Mobile canvas sizing
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            } else {
+                // Desktop canvas sizing
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        }
+        
+        resizeCanvas();
 
         // Animation state
         let isAnimating = true;
@@ -12,21 +27,6 @@
         let sampleCount = 0;
         let sampleMeans = [];
         let animationFrame;
-        
-        // Auto-cycling state
-        let autoMode = true;
-        let cycleTimer = 0;
-        let cycleDuration = 1800; // frames before switching (about 3 seconds at 60fps)
-        let currentSizeIndex = 0;
-        let currentDistIndex = 0;
-        const allSizes = [10, 30, 50, 100, 500];
-        const allDistributions = ['uniform', 'exponential', 'bimodal', 'skewed'];
-        
-        // Transition state
-        let isTransitioning = false;
-        let transitionAlpha = 1.0;
-        let transitionSpeed = 0.03; // Slower for smoother transition
-        let transitionPhase = 'fadeOut'; // 'fadeOut' or 'fadeIn'
 
         // Colors
         const colors = {
@@ -71,8 +71,8 @@
                 this.x = x;
                 this.y = y;
                 this.value = value;
-                this.targetX = canvas.width * 0.7; // Adjusted target position
-                this.targetY = canvas.height * 0.4 + value * 150; // Adjusted for new layout
+                this.targetX = canvas.width * 0.8;
+                this.targetY = canvas.height * 0.3 + value * 200;
                 this.speed = 0.02;
                 this.life = 1;
                 this.size = Math.random() * 3 + 2;
@@ -116,8 +116,8 @@
                 
                 // Create particle for each data point
                 sampleParticles.push(new Particle(
-                    Math.random() * canvas.width * 0.4 + canvas.width * 0.3, // More centered spawn area
-                    Math.random() * canvas.height * 0.3 + canvas.height * 0.1, // Adjusted vertical position
+                    Math.random() * canvas.width * 0.3 + 50,
+                    Math.random() * canvas.height * 0.3 + 100,
                     value
                 ));
             }
@@ -136,10 +136,10 @@
             
             // Create mean particle (larger, different color)
             particles.push({
-                x: canvas.width * 0.5, // Center horizontally
-                y: canvas.height * 0.4, // Adjusted vertical position
-                targetX: canvas.width * 0.7, // Adjusted target position
-                targetY: canvas.height * 0.75 - mean * 200, // Align with new histogram position
+                x: canvas.width * 0.4,
+                y: canvas.height * 0.5,
+                targetX: canvas.width * 0.8,
+                targetY: canvas.height * 0.8 - mean * 200,
                 speed: 0.03,
                 life: 2,
                 size: 8,
@@ -174,8 +174,8 @@
 
         // Draw histogram of sample means
         function drawHistogram() {
-            const startX = canvas.width * 0.2; // More centered positioning
-            const startY = canvas.height * 0.75; // Slightly higher
+            const startX = canvas.width * 0.1;
+            const startY = canvas.height * 0.8;
             const width = canvas.width * 0.6;
             const height = 150;
             const barWidth = width / histogram.length;
@@ -191,7 +191,6 @@
             ctx.stroke();
 
             // Draw bars
-            ctx.globalAlpha = 0.7;
             for (let i = 0; i < histogram.length; i++) {
                 if (histogram[i] > 0) {
                     const barHeight = (histogram[i] / maxHistogramValue) * height;
@@ -199,6 +198,7 @@
                     const y = startY - barHeight;
 
                     ctx.fillStyle = colors.accent;
+                    ctx.globalAlpha = 0.7;
                     ctx.fillRect(x, y, barWidth - 1, barHeight);
                 }
             }
@@ -241,35 +241,10 @@
         function animate() {
             if (!isAnimating) return;
             
-            // Clear the entire canvas completely
+            // Clear canvas completely to fix trails
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.95)'; // Solid dark background
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';  // Very subtle background
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Handle transition fade effect with easing
-            if (isTransitioning) {
-                if (transitionPhase === 'fadeOut') {
-                    // Smooth fade out with easing
-                    transitionAlpha -= transitionSpeed * (transitionAlpha * 0.8 + 0.2);
-                    if (transitionAlpha <= 0.05) {
-                        transitionAlpha = 0;
-                        completeTransition();
-                        transitionPhase = 'fadeIn';
-                    }
-                } else if (transitionPhase === 'fadeIn') {
-                    // Smooth fade in with easing
-                    transitionAlpha += transitionSpeed * ((1 - transitionAlpha) * 0.8 + 0.2);
-                    if (transitionAlpha >= 0.95) {
-                        transitionAlpha = 1.0;
-                        isTransitioning = false;
-                        transitionPhase = 'fadeOut';
-                    }
-                }
-            }
-            
-            // Apply smooth transition alpha with additional smoothing
-            const smoothAlpha = transitionAlpha * transitionAlpha * (3 - 2 * transitionAlpha); // Smoothstep function
-            ctx.globalAlpha = smoothAlpha;
             
             // Update and draw particles
             particles = particles.filter(particle => {
@@ -281,72 +256,17 @@
             // Draw histogram
             drawHistogram();
             
-            // Reset global alpha
-            ctx.globalAlpha = 1.0;
-            
-        // Generate new sample occasionally
-        if (Math.random() < 0.15 && particles.length < 1000) { // Increased frequency for faster cycling
-            generateSample();
-        }
-        
-        // Auto-cycle through configurations
-        if (autoMode) {
-            cycleTimer++;
-            if (cycleTimer >= cycleDuration && !isTransitioning) {
-                cycleTimer = 0;
-                startTransition();
-            }
-        }            animationFrame = requestAnimationFrame(animate);
-        }
-
-        // Start smooth transition
-        function startTransition() {
-            if (!isTransitioning) {
-                isTransitioning = true;
-                transitionPhase = 'fadeOut';
-                transitionAlpha = 1.0;
-            }
-        }
-        
-        // Complete the transition (called when fade reaches 0)
-        function completeTransition() {
-            // Cycle through sample sizes first, then distributions
-            currentSizeIndex++;
-            if (currentSizeIndex >= allSizes.length) {
-                currentSizeIndex = 0;
-                currentDistIndex++;
-                if (currentDistIndex >= allDistributions.length) {
-                    currentDistIndex = 0;
-                }
-                currentDistribution = allDistributions[currentDistIndex];
-                document.getElementById('distType').textContent = currentDistribution.charAt(0).toUpperCase() + currentDistribution.slice(1);
+            // Generate new sample occasionally (slower on mobile)
+            const generationRate = window.innerWidth <= 900 ? 0.02 : 0.05;
+            const maxParticles = window.innerWidth <= 900 ? 500 : 1000;
+            if (Math.random() < generationRate && particles.length < maxParticles) {
+                generateSample();
             }
             
-            sampleSize = allSizes[currentSizeIndex];
-            document.getElementById('sampleSize').textContent = sampleSize;
-            
-            // Complete reset for clean transition
-            particles = [];
-            histogram = new Array(50).fill(0);
-            sampleMeans = [];
-            sampleCount = 0;
-            maxHistogramValue = 1;
-            document.getElementById('sampleCount').textContent = sampleCount;
+            animationFrame = requestAnimationFrame(animate);
         }
 
         // Control functions
-        function nextConfiguration() {
-            // For manual transitions, also use smooth fade
-            if (!isTransitioning) {
-                startTransition();
-            }
-        }
-        
-        function toggleAutoMode() {
-            autoMode = !autoMode;
-            cycleTimer = 0;
-        }
-
         function toggleAnimation() {
             isAnimating = !isAnimating;
             if (isAnimating) animate();
@@ -359,59 +279,27 @@
             sampleCount = 0;
             maxHistogramValue = 1;
             document.getElementById('sampleCount').textContent = sampleCount;
-            
-            // Reset transition state
-            isTransitioning = false;
-            transitionAlpha = 1.0;
-            transitionPhase = 'fadeOut';
         }
 
         function changeSampleSize() {
-            if (!autoMode) { // Only allow manual changes when auto mode is off
-                const sizes = [10, 30, 50, 100, 500];
-                const currentIndex = sizes.indexOf(sampleSize);
-                sampleSize = sizes[(currentIndex + 1) % sizes.length];
-                document.getElementById('sampleSize').textContent = sampleSize;
-            }
+            const sizes = [10, 30, 50, 100, 500];
+            const currentIndex = sizes.indexOf(sampleSize);
+            sampleSize = sizes[(currentIndex + 1) % sizes.length];
+            document.getElementById('sampleSize').textContent = sampleSize;
         }
 
         function changeDistribution() {
-            if (!autoMode) { // Only allow manual changes when auto mode is off
-                if (!isTransitioning) {
-                    startTransition();
-                }
-            }
+            const distributions = ['uniform', 'exponential', 'bimodal', 'skewed'];
+            const currentIndex = distributions.indexOf(currentDistribution);
+            currentDistribution = distributions[(currentIndex + 1) % distributions.length];
+            document.getElementById('distType').textContent = currentDistribution.charAt(0).toUpperCase() + currentDistribution.slice(1);
+            resetAnimation();
         }
 
         // Handle window resize
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            resizeCanvas();
         });
-        
-        // Add keyboard controls
-        window.addEventListener('keydown', (e) => {
-            switch(e.key) {
-                case ' ': // Spacebar to toggle auto mode
-                    e.preventDefault();
-                    toggleAutoMode();
-                    break;
-                case 'r': // R to reset
-                    resetAnimation();
-                    break;
-                case 'p': // P to pause/play animation
-                    toggleAnimation();
-                    break;
-                case 'ArrowRight': // Right arrow for next config (manual mode only)
-                    if (!autoMode) nextConfiguration();
-                    break;
-            }
-        });
-
-        // Initialize display
-        document.getElementById('sampleSize').textContent = sampleSize;
-        document.getElementById('distType').textContent = currentDistribution.charAt(0).toUpperCase() + currentDistribution.slice(1);
-        document.getElementById('sampleCount').textContent = sampleCount;
 
         // Start animation
         animate();
